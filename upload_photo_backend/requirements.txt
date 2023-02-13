@@ -3,3 +3,4 @@ Django==4.1.6
 python-decouple==3.7
 sqlparse==0.4.3
 psycopg2==2.9.5
+Pillow==9.4.0

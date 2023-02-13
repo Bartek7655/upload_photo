@@ -27,14 +27,14 @@ services:
       context: ./upload_photo_frontend
       dockerfile: Dockerfile
     container_name: upload_photo_frontend
-    command: npm start
+    command: npm run dev
     env_file:
       - .env
     restart: on-failure
     volumes:
       - ./upload_photo_frontend:/app
     ports:
-      - 127.0.0.1:3000:3000
+      - 127.0.0.1:8080:8080
     networks:
       - upload_photo
     depends_on:
