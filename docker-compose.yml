@@ -20,7 +20,7 @@ services:
     networks:
       - upload_photo
     depends_on:
-      - database
+      - db
 
   frontend:
     build:
@@ -41,7 +41,7 @@ services:
       - backend
 
 
-  database:
+  db:
     image: postgres:15-alpine3.17
     container_name: upload_photo_database
     env_file:

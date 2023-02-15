@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from PIL import Image
+from PIL import Image as ImagePIL
 
 
 class TypeAccount(models.Model):
@@ -20,7 +20,7 @@ class Image(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        img = Image.open(self.image.path)
+        img = ImagePIL.open(self.image.path)
 
         img.thumbnail(100, 100)
         img.save(self.image.path.replace(".", "_100x100."), "JPEG")
