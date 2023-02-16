@@ -1,5 +1,8 @@
+import io
+
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.core.files.base import ContentFile
 from PIL import Image as ImagePIL
 
 
@@ -16,11 +19,25 @@ class SizeImage(models.Model):
 
 
 class Image(models.Model):
-    image = models.ImageField(upload_to='images/')
+    image = models.ImageField(upload_to='images')
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        img = ImagePIL.open(self.image.path)
+        original_image = ImagePIL.open(self.image)
 
-        img.thumbnail(100, 100)
-        img.save(self.image.path.replace(".", "_100x100."), "JPEG")
+        resized_image = original_image.resize((100, 100))
+        buffer_one = io.BytesIO()
+        resized_image.save(buffer_one, format="JPEG")
+        buffer_one.seek(0)
+        content_one = ContentFile(buffer_one.read())
+
+        resized_image_200 = original_image.resize((200, 200))
+        two = io.BytesIO()
+        resized_image_200.save(two, format="JPEG")
+        two.seek(0)
+        content_two = ContentFile(two.read())
+
+        self.image.save(f"{self.image.name}.jpg", content_one, save=False)
+        self.image.save(f"{self.image.name}200.jpg", content_two, save=False)
+
+        super().save(*args, **kwargs)
+
