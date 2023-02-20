@@ -1,7 +1,5 @@
-from uuid import uuid4
-
 
 def uniq_path(instance, filename):
-    extension, directory = filename.split('.')[-1], filename.split('.')[0]
-    filename = f"{uuid4()}.{extension}"
-    return f"{instance.user.pk}/images/{filename}"
+    extension, size = filename.split('.')[-1], filename.split('.')[-2]
+    filename = f"{instance.user.username}_{size}.{extension}"
+    return f"images/{instance.user.pk}/{filename}"

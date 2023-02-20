@@ -1,0 +1,45 @@
+[
+    {
+        "model": "main.typeaccount",
+        "fields": {
+            "id": 1,
+            "name": "Basic",
+            "originally": false,
+            "binary_link": false
+        }
+    },
+    {
+        "model": "main.typeaccount",
+        "fields": {
+            "id": 2,
+            "name": "Premium",
+            "originally": true,
+            "binary_link": false
+        }
+    },
+    {
+        "model": "main.typeaccount",
+        "fields": {
+            "id": 3,
+            "name": "Enterprise",
+            "originally": true,
+            "binary_link": true
+        }
+    },
+    {
+        "model": "main.sizeimage",
+        "fields": {
+            "height": 200,
+            "width": 200,
+            "type_account": [1, 2, 3]
+        }
+    },
+    {
+        "model": "main.sizeimage",
+        "fields": {
+            "height": 400,
+            "width": 400,
+            "type_account": [2, 3]
+        }
+    }
+]
