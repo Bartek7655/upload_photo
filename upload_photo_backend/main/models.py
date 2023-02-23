@@ -1,6 +1,9 @@
+from datetime import timedelta
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils import timezone
 
 from .utils import uniq_path
 
@@ -17,7 +20,7 @@ class User(AbstractUser):
 class TypeAccount(models.Model):
     name = models.CharField(max_length=100)
     originally = models.BooleanField(default=False)
-    binary_link = models.BooleanField(default=False)
+    binary = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -37,7 +40,10 @@ class BinaryImage(models.Model):
         ]
     )
     image_binary = models.BinaryField()
-    image = models.ForeignKey("Image", on_delete=models.CASCADE, related_name='binary')
+    image = models.ForeignKey("Image", on_delete=models.CASCADE, related_name='binary_link')
+
+    def is_expired(self):
+        return timedelta(seconds=self.expiring_time) + self.image.created < timezone.now()
 
 
 class Image(models.Model):
@@ -46,4 +52,5 @@ class Image(models.Model):
         on_delete=models.CASCADE,
         related_name="images"
     )
+    created = models.DateTimeField(auto_now_add=True)
     photo = models.ImageField(upload_to=uniq_path)
