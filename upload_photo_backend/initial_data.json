@@ -5,7 +5,7 @@
             "id": 1,
             "name": "Basic",
             "originally": false,
-            "binary_link": false
+            "binary": false
         }
     },
     {
@@ -14,7 +14,7 @@
             "id": 2,
             "name": "Premium",
             "originally": true,
-            "binary_link": false
+            "binary": false
         }
     },
     {
@@ -23,7 +23,7 @@
             "id": 3,
             "name": "Enterprise",
             "originally": true,
-            "binary_link": true
+            "binary": true
         }
     },
     {

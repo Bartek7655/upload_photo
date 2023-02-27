@@ -7,7 +7,7 @@ from .models import Image, BinaryImage
 from .tasks import resize_image_async
 
 
-@receiver(pre_save, sender=Image)
+@receiver(post_save, sender=Image)
 def resize_image(sender, instance, **kwargs):
     resize_image_async.delay(instance.id)
 

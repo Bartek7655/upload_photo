@@ -21,3 +21,27 @@ RUN python -m venv /py && \
     pip install -r requirements.txt && \
     # remove unnecessary packages used to build psycopg2
     apk del .tmp-build-deps
+
+
+#COPY ./compose/local/django/entrypoint /entrypoint
+#RUN sed -i 's/\r$//g' /entrypoint
+#RUN chmod +x /entrypoint
+#
+#COPY ./compose/local/django/start /start
+#RUN sed -i 's/\r$//g' /start
+#RUN chmod +x /start
+
+COPY ./compose/celery/worker/start /start-celeryworker
+RUN sed -i 's/\r$//g' start-celeryworker
+RUN chmod +x start-celeryworker
+
+COPY ./compose/celery/beat/start /start-celerybeat
+RUN sed -i 's/\r$//g' start-celerybeat
+RUN chmod +x start-celerybeat
+
+COPY ./compose/celery/flower/start /start-flower
+RUN sed -i 's/\r$//g' start-flower
+RUN chmod +x start-flower
+
+
+#ENTRYPOINT ["/entrypoint"]
