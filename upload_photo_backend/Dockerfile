@@ -5,10 +5,6 @@ ENV PYTHONUNBUFFERED 1
 
 COPY . /app
 
-WORKDIR /app
-
-EXPOSE 8000
-
 RUN python -m venv /py && \
     pip install --upgrade pip && \
     # installing necessary packages to install psycopg2 from source
@@ -18,30 +14,32 @@ RUN python -m venv /py && \
     apk add --update --no-cache postgresql-client && \
     apk add --update --no-cache --virtual .tmp-build-deps \
     build-base postgresql-dev musl-dev && \
-    pip install -r requirements.txt && \
+    pip install -r app/requirements.txt && \
     # remove unnecessary packages used to build psycopg2
-    apk del .tmp-build-deps
+    apk del .tmp-build-deps &&\
+    apk add bash
 
 
-#COPY ./compose/local/django/entrypoint /entrypoint
-#RUN sed -i 's/\r$//g' /entrypoint
-#RUN chmod +x /entrypoint
-#
-#COPY ./compose/local/django/start /start
-#RUN sed -i 's/\r$//g' /start
-#RUN chmod +x /start
+COPY ./compose/local/django/entrypoint /entrypoint
+RUN sed -i 's/\r$//g' /entrypoint
+RUN chmod +x /entrypoint
 
-COPY ./compose/celery/worker/start /start-celeryworker
-RUN sed -i 's/\r$//g' start-celeryworker
-RUN chmod +x start-celeryworker
+COPY ./compose/local/django/start /start
+RUN sed -i 's/\r$//g' /start
+RUN chmod +x /start
 
-COPY ./compose/celery/beat/start /start-celerybeat
-RUN sed -i 's/\r$//g' start-celerybeat
-RUN chmod +x start-celerybeat
+COPY ./compose/local/django/celery/worker/start /start-celery-worker
+RUN sed -i 's/\r$//g' /start-celery-worker
+RUN chmod +x /start-celery-worker
 
-COPY ./compose/celery/flower/start /start-flower
-RUN sed -i 's/\r$//g' start-flower
-RUN chmod +x start-flower
+COPY ./compose/local/django/celery/beat/start /start-celery-beat
+RUN sed -i 's/\r$//g' /start-celery-beat
+RUN chmod +x /start-celery-beat
 
+COPY ./compose/local/django/celery/flower/start /start-celery-flower
+RUN sed -i 's/\r$//g' /start-celery-flower
+RUN chmod +x /start-celery-flower
 
-#ENTRYPOINT ["/entrypoint"]
+WORKDIR /app
+
+ENTRYPOINT ["/entrypoint"]

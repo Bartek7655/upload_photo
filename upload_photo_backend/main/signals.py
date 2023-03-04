@@ -12,10 +12,10 @@ def resize_image(sender, instance, **kwargs):
     resize_image_async.delay(instance.id)
 
 
-@receiver(pre_delete, sender=BinaryImage)
-def delete_image_file(sender, instance, **kwargs):
-    if instance.expiring_time is not None and not instance.is_expired:
-        return
+# @receiver(pre_delete, sender=BinaryImage)
+# def delete_image_file(sender, instance, **kwargs):
+#     if instance.expiring_time is not None and not instance.is_expired:
+#         return
 
 
 @receiver(post_migrate)

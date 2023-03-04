@@ -2,14 +2,15 @@ import io
 
 from celery import shared_task
 from django.core.files.base import ContentFile
+from django.utils import timezone
 from PIL import Image as ImagePIL
 
-from .models import Image
+from .models import Image, BinaryImage
 
 from time import sleep
 
 
-@shared_task()
+@shared_task
 def resize_image_async(instance_id):
     instance = Image.objects.get(id=instance_id)
     type_account = instance.user.type_account
@@ -29,3 +30,8 @@ def resize_image_async(instance_id):
         ready_image = ContentFile(buffer.getvalue())
         path = f"{instance.photo.url}.{size.height}.jpeg"
         instance.photo.save(path, ready_image, save=False)
+
+
+@shared_task
+def delete_expired_binary_links():
+    BinaryImage.objects.filter(expired__lte=timezone.now()).delete()

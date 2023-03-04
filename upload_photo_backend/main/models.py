@@ -33,17 +33,9 @@ class SizeImage(models.Model):
 
 
 class BinaryImage(models.Model):
-    expiring_time = models.IntegerField(
-        validators=[
-            MinValueValidator(300),
-            MaxValueValidator(30000)
-        ]
-    )
+    expired = models.DateTimeField()
     image_binary = models.BinaryField()
     image = models.ForeignKey("Image", on_delete=models.CASCADE, related_name='binary_link')
-
-    def is_expired(self):
-        return timedelta(seconds=self.expiring_time) + self.image.created < timezone.now()
 
 
 class Image(models.Model):
