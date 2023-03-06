@@ -20,6 +20,7 @@ class TestViews(TestCase):
         )
         self.upload_image_url = reverse("main:upload-photo")
         self.list_image_url = reverse("main:list-photo")
+        self.get_binary_image = reverse("main:get-binary-photo", args=(1, ))
 
     @staticmethod
     def create_photo_file():
@@ -44,7 +45,7 @@ class TestViews(TestCase):
         photo = self.create_photo_file()
 
         data = {"photo": photo}
-        if expiring_time:
+        if expiring_time != 0:
             data["expiring_time"] = expiring_time
 
         response = self.client.post(
@@ -67,8 +68,10 @@ class TestViews(TestCase):
 
     def test_image_upload_view_inclusive_binary_link_fail(self):
         response = self.create_photo(self.user, 299)
+        second_response = self.create_photo(self.user, 30001)
 
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(second_response.status_code, 400)
         self.assertEqual(BinaryImage.objects.count(), 0)
 
     def test_list_image_view_success(self):
@@ -82,3 +85,10 @@ class TestViews(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
+
+    def test_binary_image_get(self):
+        self.create_photo(self.user, 400)
+        response = self.client.get(self.get_binary_image)
+
+        self.assertEqual(response.status_code, 200)
+
