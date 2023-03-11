@@ -26,7 +26,6 @@ class ImageUploadView(CreateAPIView):
 
     def perform_create(self, serializer):
         photo = self.request.FILES.get("photo")
-        print('photo in perform_create', photo.read())
         try:
             expiring_time = self.request.data.get("expiring_time")
         except:
