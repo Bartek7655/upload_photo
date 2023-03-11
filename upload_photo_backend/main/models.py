@@ -50,15 +50,14 @@ class Image(models.Model):
     )
 
     def save(self, *args, **kwargs):
-        photo_bytes = self.photo.read()
-        type_account = self.user.type_account
+        sizes = []
+        for size in self.user.type_account.sizes.all():
+            sizes.append(size.height)
 
-        if not type_account.originally:
-            self.photo = None
         super().save(*args, **kwargs)
 
         from .tasks import resize_image_async
-        resize_image_async.delay(self.id, photo_bytes, type_account.sizes.all())
+        resize_image_async.delay(image_id=self.id, sizes=sizes)
 
 
 class SizeImageUpload(models.Model):
