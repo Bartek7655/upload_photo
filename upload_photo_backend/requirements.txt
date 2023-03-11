@@ -1,5 +1,12 @@
 asgiref==3.6.0
+celery==5.2.7
+flower==1.2.0
+worker==2018.4.1
 Django==4.1.6
 python-decouple==3.7
 sqlparse==0.4.3
 psycopg2==2.9.5
+Pillow==9.4.0
+redis==4.5.1
+djangorestframework==3.14.0
+django-celery-beat==2.4.0
