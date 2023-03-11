@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from .utils import uniq_path
+from .utils import uniq_path_original_image, uniq_path_new_size_image
 
 
 class User(AbstractUser):
@@ -27,6 +27,9 @@ class SizeImage(models.Model):
     width = models.IntegerField()
     type_account = models.ManyToManyField(TypeAccount, related_name='sizes')
 
+    def __str__(self):
+        return str(self.height)
+
 
 class BinaryImage(models.Model):
     expired = models.DateTimeField()
@@ -41,4 +44,29 @@ class Image(models.Model):
         related_name="images"
     )
     created = models.DateTimeField(auto_now_add=True)
-    photo = models.ImageField(upload_to=uniq_path)
+    photo = models.ImageField(
+        null=True,
+        upload_to=uniq_path_original_image
+    )
+
+    def save(self, *args, **kwargs):
+        photo_bytes = self.photo.read()
+        type_account = self.user.type_account
+
+        if not type_account.originally:
+            self.photo = None
+        super().save(*args, **kwargs)
+
+        from .tasks import resize_image_async
+        resize_image_async.delay(self.id, photo_bytes, type_account.sizes.all())
+
+
+class SizeImageUpload(models.Model):
+    photo = models.ImageField(
+        upload_to=uniq_path_new_size_image
+    )
+    image = models.ForeignKey(
+        Image,
+        on_delete=models.CASCADE,
+        related_name='different_picture_sizes'
+    )

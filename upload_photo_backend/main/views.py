@@ -25,6 +25,8 @@ class ImageUploadView(CreateAPIView):
             raise serializers.ValidationError("Invalid expiring time")
 
     def perform_create(self, serializer):
+        photo = self.request.FILES.get("photo")
+        print('photo in perform_create', photo.read())
         try:
             expiring_time = self.request.data.get("expiring_time")
         except:
@@ -38,7 +40,7 @@ class ImageUploadView(CreateAPIView):
             expiring_time = timedelta(seconds=expiring_time) + timezone.now()
             BinaryImage.objects.create(
                 expired=expiring_time,
-                image_binary=instance.photo.read(),
+                image_binary=photo.read(),
                 image=instance
             )
 
